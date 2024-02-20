@@ -1,31 +1,31 @@
 pipeline {
-    agent { label 'sa-javaslave' }
+    agent { label 'slave1' }
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
-        maven "slave_maven"
+        maven "maven-3.6.3"
     }
 
     stages {
         stage('SCM Checkout') {
             steps {
-                echo 'Checkout Src from github repo'
-		git 'https://github.com/LoksaiETA/Java-mvn-app2.git'
+                echo 'Perform SCM Checkout'
+		git 'https://github.com/aswaray1978/Java-mvn-app2.git'
             }
         }
-        stage('Maven Build') {
+        stage('Application_Build') {
             steps {
                 echo 'Perform Maven Build'
-                // Run Maven on a Unix agent.
                 sh "mvn -Dmaven.test.failure.ignore=true clean package"
             }
         }
-        stage('Deploy to QA Server') {
+	stage('Build Docker Image') {
             steps {
-		script {
-		sshPublisher(publishers: [sshPublisherDesc(configName: 'QA_Server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/mvn-hello-world.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-		}
+	       sh 'docker version'
+	       sh "docker build -t bostondataengineer/bde-eta-app:${BUILD_NUMBER} ."
+	       sh 'docker image list'
+	       sh "docker tag bostondataengineer/bde-eta-app:${BUILD_NUMBER} bostondataengineer/bde-eta-app:latest"
+            }
         }
-	}
     }
 }
