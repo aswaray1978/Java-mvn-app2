@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bostondataengineer-eta-deploy
+  name: bostondataengineer-deploy
   labels:
-    app: bostondataengineer-eta-app
+    app: bostondataengineer-mvn-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: bostondataengineer-eta-app
+      app: bostondataengineer-mvn-app
   template:
     metadata:
       labels:
-        app: bostondataengineer-eta-app
+        app: bostondataengineer-mvn-app
     spec:
       containers:
-      - name: bostondataengineer-eta-container
-        image: bostondataengineer/bde-eta-app
+      - name: bostondataengineer-mvn-container
+        image: bostondataengineer/bdedevops:v1.0
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bostondataengineer-eta-np-service
+  name: bostondataengineer-np-service
   labels:
     app: bostondataengineer-mvn-app
 spec:
